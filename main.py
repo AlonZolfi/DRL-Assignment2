@@ -4,7 +4,6 @@ import utils
 
 def main(config):
     utils.train(config)
-    # utils.write_log(config)
 
 
 if __name__ == '__main__':
@@ -32,7 +31,7 @@ if __name__ == '__main__':
     # Policy network parameters
     parser.add_argument('--learning_rate_policy', type=float, default=5e-4,
                         help='The policy gradient network learning rate')
-    parser.add_argument('--learning_rate_decay_rate_policy', type=float, default=0.95,
+    parser.add_argument('--learning_rate_decay_rate_policy', type=float, default=0.99,
                         help='The policy network learning rate decay value')
     parser.add_argument('--learning_rate_decay_steps_policy', type=int, default=50,
                         help='The policy network learning rate decay steps')
@@ -42,7 +41,7 @@ if __name__ == '__main__':
     # Baseline network parameters
     parser.add_argument('--learning_rate_baseline', type=float, default=5e-4,
                         help='The baseline network learning rate')
-    parser.add_argument('--learning_rate_decay_rate_baseline', type=float, default=0.95,
+    parser.add_argument('--learning_rate_decay_rate_baseline', type=float, default=0.99,
                         help='The policy network learning rate decay value')
     parser.add_argument('--learning_rate_decay_steps_baseline', type=int, default=50,
                         help='The policy network learning rate decay steps')

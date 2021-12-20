@@ -4,12 +4,19 @@ from policy import PolicyNetwork
 from baseline import BaselineNetwork
 import collections
 import numpy as np
+import pandas as pd
 import os
 import datetime
 from pathlib import Path
 
 
+def save_config(config):
+    new_config = pd.DataFrame(pd.Series(config)).transpose().set_index('cur_run')
+    new_config.to_csv('config_run_mapper.csv', mode='a', header=not os.path.isfile('config_run_mapper.csv'))
+
+
 def set_seed(seed_value):
+    os.environ['PYTHONHASHSEED'] = str(seed_value)
     np.random.seed(seed_value)
     tf.random.set_random_seed(seed_value)
 
@@ -38,7 +45,7 @@ def train(config):
 
     Path(config['log_dir']).mkdir(parents=True, exist_ok=True)
     summary_writer = tf.summary.FileWriter(
-        os.path.join(config['log_dir'], datetime.datetime.now().strftime("%Y%m%d-%H%M%S")))
+        os.path.join(config['log_dir'], config['cur_run']))
 
     # Start training the agent with REINFORCE algorithm
     with tf.Session() as sess:
@@ -106,14 +113,14 @@ def update_reinforce_with_baseline(sess, config, policy, baseline, episode_trans
     for t, transition in enumerate(episode_transitions):
         total_discounted_return = sum(
             config['discount_factor'] ** i * t.reward for i, t in enumerate(episode_transitions[t:]))  # Rt
-        if baseline:
-            value_function = sess.run(baseline.output, {baseline.state: transition.state})
-            advantage = total_discounted_return - value_function
-            feed_dict_baseline = {baseline.state: transition.state, baseline.R_t: advantage,
-                                  baseline.state_value: total_discounted_return}
-            _, baseline_loss = sess.run([baseline.optimizer, baseline.loss], feed_dict_baseline)
-            total_discounted_return = advantage
-        feed_dict_policy = {policy.state: transition.state, policy.R_t: total_discounted_return,
+
+        value_function = sess.run(baseline.output, {baseline.state: transition.state})
+        advantage = total_discounted_return - value_function
+        feed_dict_baseline = {baseline.state: transition.state, baseline.R_t: advantage,
+                              baseline.state_value: total_discounted_return}
+        _, baseline_loss = sess.run([baseline.optimizer, baseline.loss], feed_dict_baseline)
+
+        feed_dict_policy = {policy.state: transition.state, policy.R_t: advantage,
                             policy.action: transition.action}
         _, policy_loss = sess.run([policy.optimizer, policy.loss], feed_dict_policy)
 

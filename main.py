@@ -4,7 +4,6 @@ import datetime
 
 
 def main(config):
-    config['cur_run'] = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     utils.save_config(config)
     utils.train(config)
 
@@ -18,7 +17,7 @@ if __name__ == '__main__':
                         help='Whether game graphics should be shown')
 
     # Training parameters
-    parser.add_argument('--type', type=str, default='reinforce',
+    parser.add_argument('--type', type=str, default='reinforce_with_baseline',
                         help='', choices=['reinforce', 'reinforce_with_baseline', 'actor_critic'])
     parser.add_argument('--seed', type=int, default=1,
                         help='The seed for reproducibility')
@@ -46,8 +45,8 @@ if __name__ == '__main__':
                         help='The baseline network learning rate')
     parser.add_argument('--learning_rate_decay_rate_baseline', type=float, default=0.99,
                         help='The policy network learning rate decay value')
-    parser.add_argument('--learning_rate_decay_steps_baseline', type=int, default=200,
+    parser.add_argument('--learning_rate_decay_steps_baseline', type=int, default=300,
                         help='The policy network learning rate decay steps')
-    parser.add_argument('--baseline_units', metavar='N', type=int, nargs='+', default=[32, 32, 32, 32],
+    parser.add_argument('--baseline_units', metavar='N', type=int, nargs='+', default=[32, 32, 32],
                         help='Number of units in each dense layer of the baseline network')
     main(vars(parser.parse_args()))

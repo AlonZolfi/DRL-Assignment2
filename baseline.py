@@ -6,7 +6,6 @@ class BaselineNetwork:
         with tf.variable_scope(name):
             self.state = tf.placeholder(tf.float32, [None, config['state_size']], name="state")
             self.state_value = tf.placeholder(tf.float32,  name="state_value")
-            self.R_t = tf.placeholder(tf.float32, name="total_rewards")
 
             kernel_initializer = tf.contrib.layers.xavier_initializer(seed=config['seed'])
             dense = tf.layers.dense(units=config['baseline_units'][0],
@@ -25,8 +24,8 @@ class BaselineNetwork:
                                           kernel_initializer=kernel_initializer,
                                           activation=None)
 
-            self.diff = tf.squared_difference(self.output, self.state_value)
-            self.loss = self.diff
+            self.loss = tf.squared_difference(self.output, self.state_value)
+
             global_step = tf.Variable(0, trainable=False)
             decayed_lr = tf.train.exponential_decay(learning_rate=config['learning_rate_baseline'],
                                                     global_step=global_step,

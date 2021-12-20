@@ -11,6 +11,7 @@ from pathlib import Path
 
 
 def save_config(config):
+    config['cur_run'] = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     new_config = pd.DataFrame(pd.Series(config)).transpose().set_index('cur_run')
     new_config.to_csv('config_run_mapper.csv', mode='a', header=not os.path.isfile('config_run_mapper.csv'))
 
@@ -116,8 +117,8 @@ def update_reinforce_with_baseline(sess, config, policy, baseline, episode_trans
 
         value_function = sess.run(baseline.output, {baseline.state: transition.state})
         advantage = total_discounted_return - value_function
-        feed_dict_baseline = {baseline.state: transition.state, baseline.R_t: advantage,
-                              baseline.state_value: total_discounted_return}
+
+        feed_dict_baseline = {baseline.state: transition.state, baseline.state_value: advantage}
         _, baseline_loss = sess.run([baseline.optimizer, baseline.loss], feed_dict_baseline)
 
         feed_dict_policy = {policy.state: transition.state, policy.R_t: advantage,

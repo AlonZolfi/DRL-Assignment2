@@ -1,6 +1,5 @@
 import argparse
 import utils
-import datetime
 
 
 def main(config):

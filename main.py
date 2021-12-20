@@ -8,7 +8,8 @@ def main(config):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Policy gradients for gym-ai environments')
+    parser = argparse.ArgumentParser(
+        description='Policy gradients for gym-ai environments')
     # Environment parameters
     parser.add_argument('--env_name', type=str, default='CartPole-v1',
                         help='See options in: https://gym.openai.com/envs')
@@ -46,6 +47,7 @@ if __name__ == '__main__':
                         help='The policy network learning rate decay value')
     parser.add_argument('--learning_rate_decay_steps_baseline', type=int, default=300,
                         help='The policy network learning rate decay steps')
-    parser.add_argument('--baseline_units', metavar='N', type=int, nargs='+', default=[32, 32, 32],
+    parser.add_argument('--baseline_units', metavar='N', type=int, nargs='+',
+                        default=[32, 32, 32, 32],
                         help='Number of units in each dense layer of the baseline network')
     main(vars(parser.parse_args()))

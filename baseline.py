@@ -4,10 +4,13 @@ import tensorflow as tf
 class BaselineNetwork:
     def __init__(self, config, name='baseline'):
         with tf.variable_scope(name):
-            self.state = tf.placeholder(tf.float32, [None, config['state_size']], name="state")
+            self.state = tf.placeholder(
+                tf.float32, [None, config['state_size']], name="state")
             self.state_value = tf.placeholder(tf.float32,  name="state_value")
+            self.td_error = tf.placeholder(tf.float32,  name="td_error")
 
-            kernel_initializer = tf.contrib.layers.xavier_initializer(seed=config['seed'])
+            kernel_initializer = tf.contrib.layers.xavier_initializer(
+                seed=config['seed'])
             dense = tf.layers.dense(units=config['baseline_units'][0],
                                     inputs=self.state,
                                     kernel_initializer=kernel_initializer,
@@ -25,6 +28,8 @@ class BaselineNetwork:
                                           activation=None)
 
             self.loss = tf.squared_difference(self.output, self.state_value)
+            # if config['type'] == 'actor_critic':
+            #     self.loss = self.loss*self.td_error
 
             global_step = tf.Variable(0, trainable=False)
             decayed_lr = tf.train.exponential_decay(learning_rate=config['learning_rate_baseline'],
@@ -32,4 +37,5 @@ class BaselineNetwork:
                                                     decay_steps=config['learning_rate_decay_steps_baseline'],
                                                     decay_rate=config['learning_rate_decay_rate_baseline'],
                                                     staircase=True)
-            self.optimizer = tf.train.AdamOptimizer(learning_rate=decayed_lr).minimize(self.loss, global_step=global_step)
+            self.optimizer = tf.train.AdamOptimizer(
+                learning_rate=decayed_lr).minimize(self.loss, global_step=global_step)

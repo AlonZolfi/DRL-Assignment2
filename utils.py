@@ -154,12 +154,14 @@ def update_actor_critic(sess, config, reward, state, next_state,
     td_error = td_target - V_t_1
 
     baseline_dict = {baseline.state: state, baseline.td_error: td_error*I,
-                     baseline.state_value: td_target}
+                     baseline.state_value: td_target,
+                     baseline.lr: config['lr_baseline']}
     _, value_loss = sess.run(
         [baseline.optimizer, baseline.loss], baseline_dict)
 
-    policty_dict = {policy.state: state, policy.R_t: td_error,
-                    policy.action: action_one_hot}
+    policty_dict = {policy.state: state, policy.R_t: td_error*I,
+                    policy.action: action_one_hot,
+                    policy.lr: config['lr_policy']}
     _, policy_loss = sess.run(
         [policy.optimizer, policy.loss], policty_dict)
 

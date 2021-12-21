@@ -25,7 +25,7 @@ if __name__ == '__main__':
                         help='Maximum number of steps in each episode')
     parser.add_argument('--max_steps', type=int, default=501,
                         help='Maximum number of steps in each episode')
-    parser.add_argument('--discount_factor', type=float, default=0.99,
+    parser.add_argument('--discount_factor', type=float, default=0.9,
                         help='The discount factor')
     parser.add_argument('--log_dir', type=str, default='./logs',
                         help='The path to save to logs to')
@@ -35,9 +35,10 @@ if __name__ == '__main__':
                         help='The policy gradient network learning rate')
     parser.add_argument('--learning_rate_decay_rate_policy', type=float, default=0.99,
                         help='The policy network learning rate decay value')
-    parser.add_argument('--learning_rate_decay_steps_policy', type=int, default=300,
+    parser.add_argument('--learning_rate_decay_steps_policy', type=int, default=10000,
                         help='The policy network learning rate decay steps')
-    parser.add_argument('--policy_units', metavar='N', type=int, nargs='+', default=[64, 64, 64, 64],
+    parser.add_argument('--policy_units', metavar='N', type=int, nargs='+',
+                        default=[12, 12],
                         help='Number of units in each dense layer of the policy network')
 
     # Baseline network parameters
@@ -45,9 +46,9 @@ if __name__ == '__main__':
                         help='The baseline network learning rate')
     parser.add_argument('--learning_rate_decay_rate_baseline', type=float, default=0.99,
                         help='The policy network learning rate decay value')
-    parser.add_argument('--learning_rate_decay_steps_baseline', type=int, default=300,
+    parser.add_argument('--learning_rate_decay_steps_baseline', type=int, default=10000,
                         help='The policy network learning rate decay steps')
     parser.add_argument('--baseline_units', metavar='N', type=int, nargs='+',
-                        default=[32, 32, 32, 32],
+                        default=[12, 12],
                         help='Number of units in each dense layer of the baseline network')
     main(vars(parser.parse_args()))

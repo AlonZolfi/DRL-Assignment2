@@ -28,7 +28,6 @@ def train(config):
     tf.disable_eager_execution()
     set_seed(config['seed'])
     env = gym.make(config['env_name'])
-
     state_size = env.observation_space.shape[0]
     action_size = env.action_space.n
     config['state_size'] = state_size
@@ -60,7 +59,7 @@ def train(config):
             state = env.reset()
             state = state.reshape([1, state_size])
             episode_transitions = []
-
+            I = 1
             for step in range(config['max_steps']):
                 actions_distribution = sess.run(
                     policy.actions_distribution, {policy.state: state})
@@ -77,7 +76,8 @@ def train(config):
 
                 update_actor_critic(sess, config, reward, state,
                                     next_state, action_one_hot, done,
-                                    policy, baseline)
+                                    policy, baseline, I)
+                I = I*config['discount_factor']
 
                 episode_transitions.append(
                     Transition(state=state, action=action_one_hot, reward=reward, next_state=next_state, done=done))
@@ -146,21 +146,22 @@ def update_reinforce_with_baseline(sess, config, policy, baseline, episode_trans
 
 
 def update_actor_critic(sess, config, reward, state, next_state,
-                        action_one_hot, done, policy, baseline):
+                        action_one_hot, done, policy, baseline, I):
     value_next_state = 0 if done else sess.run(
         baseline.output, {baseline.state: next_state})
     td_target = reward + config['discount_factor'] * value_next_state
     V_t_1 = sess.run(baseline.output, {baseline.state: state})
     td_error = td_target - V_t_1
 
-    feed_dict = {baseline.state: state, baseline.state_value: td_target}
+    baseline_dict = {baseline.state: state, baseline.td_error: td_error*I,
+                     baseline.state_value: td_target}
     _, value_loss = sess.run(
-        [baseline.optimizer, baseline.loss], feed_dict)
+        [baseline.optimizer, baseline.loss], baseline_dict)
 
-    feed_dict = {policy.state: state, policy.R_t: td_error,
-                 policy.action: action_one_hot}
+    policty_dict = {policy.state: state, policy.R_t: td_error,
+                    policy.action: action_one_hot}
     _, policy_loss = sess.run(
-        [policy.optimizer, policy.loss], feed_dict)
+        [policy.optimizer, policy.loss], policty_dict)
 
 
 def write_custom_scalar_to_tensorboard(summary_writer, tag, value, step):

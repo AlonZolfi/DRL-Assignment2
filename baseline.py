@@ -23,16 +23,14 @@ class BaselineNetwork:
                                         kernel_initializer=kernel_initializer,
                                         activation=tf.nn.relu)
 
-            self.output = tf.layers.dense(units=1,
-                                          inputs=dense,
-                                          kernel_initializer=kernel_initializer,
-                                          activation=None)
+            self.output = tf.squeeze(tf.layers.dense(units=1,
+                                                     inputs=dense,
+                                                     kernel_initializer=kernel_initializer,
+                                                     activation=None))
 
             self.loss = tf.squared_difference(self.output, self.state_value)
             if config['type'] == 'actor_critic':
-                self.lr = self.lr*self.td_error
-                self.optimizer = tf.train.GradientDescentOptimizer(
-                    learning_rate=self.lr).minimize(self.loss)
+                self.optimizer = tf.train.GradientDescentOptimizer(learning_rate=self.lr).minimize(self.loss)
             else:
                 global_step = tf.Variable(0, trainable=False)
                 decayed_lr = tf.train.exponential_decay(learning_rate=config['lr_baseline'],

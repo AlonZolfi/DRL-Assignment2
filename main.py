@@ -17,7 +17,7 @@ if __name__ == '__main__':
                         help='Whether game graphics should be shown')
 
     # Training parameters
-    parser.add_argument('--type', type=str, default='reinforce_with_baseline',
+    parser.add_argument('--type', type=str, default='actor_critic',
                         help='', choices=['reinforce', 'reinforce_with_baseline', 'actor_critic'])
     parser.add_argument('--seed', type=int, default=1,
                         help='The seed for reproducibility')
@@ -25,30 +25,28 @@ if __name__ == '__main__':
                         help='Maximum number of steps in each episode')
     parser.add_argument('--max_steps', type=int, default=501,
                         help='Maximum number of steps in each episode')
-    parser.add_argument('--discount_factor', type=float, default=0.99,
+    parser.add_argument('--discount_factor', type=float, default=0.999,
                         help='The discount factor')
     parser.add_argument('--log_dir', type=str, default='./logs',
                         help='The path to save to logs to')
 
     # Policy network parameters
-    parser.add_argument('--lr_policy', type=float, default=0.001,
+    parser.add_argument('--lr_policy', type=float, default=1e-5,
                         help='The policy gradient network learning rate')
     parser.add_argument('--lr_decay_rate_policy', type=float, default=0.99,
                         help='The policy network learning rate decay value')
-    parser.add_argument('--lr_decay_steps_policy', type=int, default=10000,
+    parser.add_argument('--lr_decay_steps_policy', type=int, default=1000,
                         help='The policy network learning rate decay steps')
-    parser.add_argument('--policy_units', metavar='N', type=int, nargs='+',
-                        default=[24, 24],
+    parser.add_argument('--policy_units', metavar='N', type=int, nargs='+', default=[12, 12],
                         help='Number of units in each dense layer of the policy network')
 
     # Baseline network parameters
-    parser.add_argument('--lr_baseline', type=float, default=0.001,
+    parser.add_argument('--lr_baseline', type=float, default=1e-5,
                         help='The baseline network learning rate')
     parser.add_argument('--lr_decay_rate_baseline', type=float, default=0.99,
                         help='The policy network learning rate decay value')
-    parser.add_argument('--lr_decay_steps_baseline', type=int, default=10000,
+    parser.add_argument('--lr_decay_steps_baseline', type=int, default=1000,
                         help='The policy network learning rate decay steps')
-    parser.add_argument('--baseline_units', metavar='N', type=int, nargs='+',
-                        default=[24, 24],
+    parser.add_argument('--baseline_units', metavar='N', type=int, nargs='+', default=[12, 12],
                         help='Number of units in each dense layer of the baseline network')
     main(vars(parser.parse_args()))

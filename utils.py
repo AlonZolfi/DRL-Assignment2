@@ -153,10 +153,10 @@ def update_reinforce_with_baseline(sess, config, policy, baseline,
 
 def update_actor_critic(sess, config, policy, baseline,
                         done, state, next_state, reward, action):
-    value_nex_state = 0 if done else sess.run(
+    value_next_state = 0 if done else sess.run(
         baseline.output, {baseline.state: next_state})
 
-    td_target = reward + config['discount_factor'] * value_nex_state
+    td_target = reward + config['discount_factor'] * value_next_state
     td_error = td_target - \
         sess.run(baseline.output, {baseline.state: state})
 

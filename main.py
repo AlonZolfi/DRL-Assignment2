@@ -17,7 +17,7 @@ if __name__ == '__main__':
                         help='Whether game graphics should be shown')
 
     # Training parameters
-    parser.add_argument('--type', type=str, default='reinforce_with_baseline',
+    parser.add_argument('--type', type=str, default='actor_critic',
                         help='', choices=['reinforce',
                                           'reinforce_with_baseline',
                                           'actor_critic'])
